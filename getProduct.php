@@ -109,8 +109,8 @@ class getProduct extends Command
             $response = $this->getCurl($cat_id, $page);
             if ($response === false)
             {
-                Log::error("Failed to fetch data for category: $cat_id, page: $page");
                 DB::rollBack();
+                Log::error("Failed to fetch data for category: $cat_id, page: $page");
                 return 0;
             }
 
@@ -118,6 +118,7 @@ class getProduct extends Command
             $decode_res = json_decode($response, true);
             if ($decode_res === null && json_last_error() !== JSON_ERROR_NONE)
             {
+                DB::rollBack();
                 Log::error('JSON decode error: ' . json_last_error_msg());
                 return 0;
             }
