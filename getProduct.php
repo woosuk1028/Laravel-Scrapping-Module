@@ -38,6 +38,7 @@ class getProduct extends Command
     protected $productList  = [];
     protected $priceHistory = [];
     protected $productDupCheck = [];
+    protected $changeDupCheck = [];
     protected $historyDupCheck = [];
 
     public function handle()
@@ -169,8 +170,15 @@ class getProduct extends Command
 
                         if ($this->productList[$prtArr['code']]['price'] > $prtArr['price'])
                         {
+                            //Change Live Duplicate Check
+                            if(isset($this->changeDupCheck[$prtArr['p_code']]))
+                                continue;
+
                             //기존 가격보다 저가로 떨어지면 떨어진 원인을 타입으로 가져가서 가격 변동 TBL에 INSERT
                             $this->setChangeQuery($prtArr, $changeType, $changeQuery);
+
+                            //Change Live Code Push
+                            $this->changeDupCheck[$prtArr['p_code']] = true;
                         }
                     }
                     else
